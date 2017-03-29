@@ -17,6 +17,7 @@ var Botkit = require('./lib/Botkit.js');
 var os = require('os');
 var commandLineArgs = require('command-line-args');
 var localtunnel = require('localtunnel');
+var giphy = require('giphy-api')();
 
 const ops = commandLineArgs([
       {name: 'lt', alias: 'l', args: 1, description: 'Use localtunnel.me to make your bot available on the web.',
@@ -38,6 +39,7 @@ var controller = Botkit.facebookbot({
     verify_token: process.env.verify_token,
     app_secret: process.env.app_secret,
     validate_requests: true, // Refuse any requests that don't come from FB on your receive webhook, must provide FB_APP_SECRET in environment variables
+    require_delivery: true,
 });
 
 var bot = controller.spawn({
@@ -118,7 +120,7 @@ controller.hears(['^ahoj', '^čau', '^cau', '^zdravim', '^nazdar', '^hoj'], 'mes
 });
 
 controller.hears(['^hi', '^hello', 'how are you'], 'message_received,facebook_postback', function(bot, message) {
-    bot.reply(message, 'Mluv prosimtě česky, jo?');
+    bot.reply(message, 'Mluv prosimtě česky, jo vole?');
 });
 
 controller.hears(['[rř][ií]kej mi (.*)', 'jmenuj[ui] se (.*)'], 'message_received', function(bot, message) {
@@ -242,6 +244,28 @@ controller.hears(['uptime', 'p[rř]edstav se', 'kdo jsi', 'jak se jmenuje[sš]']
     });
 
 
+///////////////////////////////
+// GIPHY                     //
+///////////////////////////////
+controller.hears(['^giphy (.*)', '^gif (.*)'], 'message_received', function(bot, message) {
+    var gif = message.match[1];
+    bot.startTyping(message, function () {
+        giphy.random(gif, function (err, res) {
+            var gifmessage = 'Tak to fakt nevím, sorry jako.';
+            if (res.data.id) {
+                gifmessage = {
+                    'attachment': {
+                        'type': 'image',
+                        'payload':  {
+                            'url': res.data.fixed_height_downsampled_url
+                        }
+                    }
+                };
+            }
+            bot.reply(message, gifmessage);
+        });
+    });
+});
 
 controller.on('message_received', function(bot, message) {
     bot.reply(message, 'Zkus: jak se jmenuju, ahoj, kdo jsi nebo říkej mi (*)');
