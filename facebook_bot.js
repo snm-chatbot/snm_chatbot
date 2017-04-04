@@ -17,7 +17,6 @@ var Botkit = require('./lib/Botkit.js');
 var os = require('os');
 var commandLineArgs = require('command-line-args');
 var localtunnel = require('localtunnel');
-var giphy = require('giphy-api')();
 
 const ops = commandLineArgs([
       {name: 'lt', alias: 'l', args: 1, description: 'Use localtunnel.me to make your bot available on the web.',
@@ -66,7 +65,7 @@ controller.setupWebserver(process.env.PORT || 3000, function(err, webserver) {
 });
 
 
-controller.api.messenger_profile.greeting('Hello! I\'m a Botkit bot!');
+controller.api.messenger_profile.greeting('Ahoj! Já jsem Lev Manovich!');
 controller.api.messenger_profile.get_started('sample_get_started_payload');
 controller.api.messenger_profile.menu([{
     'locale': 'default',
@@ -87,12 +86,6 @@ controller.api.messenger_profile.menu([{
                     'payload': 'Hi'
                 }
             ]
-        },
-        {
-            'type': 'web_url',
-            'title': 'Botkit Docs',
-            'url': 'https://github.com/howdyai/botkit/blob/master/readme-facebook.md',
-            'webview_height_ratio': 'full'
         }
     ]
 },
@@ -109,169 +102,21 @@ controller.api.messenger_profile.menu([{
 ///////////////////////////////
 // START OF THE CONVERSATION //
 ///////////////////////////////
-controller.hears(['^ahoj', '^čau', '^cau', '^zdravim', '^nazdar', '^hoj'], 'message_received,facebook_postback', function(bot, message) {
-    controller.storage.users.get(message.user, function(err, user) {
-        if (user && user.name) {
-            bot.reply(message, 'Ahoj ' + user.name + '!!');
-        } else {
-            bot.reply(message, 'Ahoj.');
-        }
-    });
-});
 
-controller.hears(['^hi', '^hello', 'how are you'], 'message_received,facebook_postback', function(bot, message) {
-    bot.reply(message, 'Mluv prosimtě česky, jo vole?');
-});
+// BASIC
+// Always first
+require('./skills/basics')(controller);
 
-controller.hears(['[rř][ií]kej mi (.*)', 'jmenuj[ui] se (.*)'], 'message_received', function(bot, message) {
-    var name = message.match[1];
-    controller.storage.users.get(message.user, function(err, user) {
-        if (!user) {
-            user = {
-                id: message.user,
-            };
-        }
-        user.name = name;
-        controller.storage.users.save(user, function(err, id) {
-            bot.reply(message, 'Jasně, budu ti říkat ' + user.name);
-        });
-    });
-});
+// PROCEDURAL
+require('./skills/harmonogram')(controller);
 
-controller.hears(['jak se jmenuj[ui]', 'who am i'], 'message_received', function(bot, message) {
-    controller.storage.users.get(message.user, function(err, user) {
-        if (user && user.name) {
-            bot.reply(message, 'Jsi ' + user.name);
-        } else {
-            bot.startConversation(message, function(err, convo) {
-                if (!err) {
-                    convo.say('To přece ještě nevim!');
-                    convo.ask('Jak ti mám říkat?', function(response, convo) {
-                        convo.ask('Chceš abych ti říkal `' + response.text + '`?', [
-                            {
-                                pattern: 'ano',
-                                callback: function(response, convo) {
-                                    // since no further messages are queued after this,
-                                    // the conversation will end naturally with status == 'completed'
-                                    convo.next();
-                                }
-                            },
-                            {
-                                pattern: 'ne',
-                                callback: function(response, convo) {
-                                    // stop the conversation. this will cause it to end with status == 'stopped'
-                                    convo.stop();
-                                }
-                            },
-                            {
-                                default: true,
-                                callback: function(response, convo) {
-                                    convo.repeat();
-                                    convo.next();
-                                }
-                            }
-                        ]);
+// GIFS
+// giphy, gif
+require('./skills/fun')(controller);
 
-                        convo.next();
-
-                    }, {'key': 'nickname'}); // store the results in a field called nickname
-
-                    convo.on('end', function(convo) {
-                        if (convo.status == 'completed') {
-                            bot.reply(message, 'OK! Budu si to pamatovat.');
-
-                            controller.storage.users.get(message.user, function(err, user) {
-                                if (!user) {
-                                    user = {
-                                        id: message.user,
-                                    };
-                                }
-                                user.name = convo.extractResponse('nickname');
-                                controller.storage.users.save(user, function(err, id) {
-                                    bot.reply(message, 'Jasan, budu ti říkat ' + user.name);
-                                });
-                            });
-
-
-
-                        } else {
-                            // this happens if the conversation ended prematurely for some reason
-                            bot.reply(message, 'OK, nevadí!');
-                        }
-                    });
-                }
-            });
-        }
-    });
-});
-
-controller.hears(['shutdown'], 'message_received', function(bot, message) {
-
-    bot.startConversation(message, function(err, convo) {
-
-        convo.ask('Opravdu?', [
-            {
-                pattern: bot.utterances.yes,
-                callback: function(response, convo) {
-                    convo.say('Ahoj!');
-                    convo.next();
-                    setTimeout(function() {
-                        process.exit();
-                    }, 3000);
-                }
-            },
-        {
-            pattern: bot.utterances.no,
-            default: true,
-            callback: function(response, convo) {
-                convo.say('*Phew!*');
-                convo.next();
-            }
-        }
-        ]);
-    });
-});
-
-
-controller.hears(['uptime', 'p[rř]edstav se', 'kdo jsi', 'jak se jmenuje[sš]'], 'message_received',
-    function(bot, message) {
-
-        var hostname = os.hostname();
-        var uptime = formatUptime(process.uptime());
-
-        bot.reply(message,
-            ':|] Jsem bot a běžím už ' + uptime + ' na ' + hostname + '.');
-    });
-
-
-///////////////////////////////
-// GIPHY                     //
-///////////////////////////////
-controller.hears(['^giphy (.*)', '^gif (.*)'], 'message_received', function(bot, message) {
-    var gif = message.match[1];
-    bot.startTyping(message, function () {
-        giphy.random(gif, function (err, res) {
-            var gifmessage = 'Tak to fakt nevím, sorry jako.';
-            if (res.data.id) {
-                gifmessage = {
-                    'attachment': {
-                        'type': 'image',
-                        'payload':  {
-                            'url': res.data.fixed_height_downsampled_url
-                        }
-                    }
-                };
-            }
-            bot.reply(message, gifmessage);
-        });
-    });
-});
-
-controller.on('message_received', function(bot, message) {
-    bot.reply(message, 'Zkus: jak se jmenuju, ahoj, kdo jsi nebo říkej mi (*)');
-    return false;
-});
-
+// FALLBACK
+// Always last
+require('./skills/fallback')(controller);
 
 function formatUptime(uptime) {
     var unit = 'second';
@@ -283,7 +128,7 @@ function formatUptime(uptime) {
         uptime = uptime / 60;
         unit = 'hour';
     }
-    if (uptime != 1) {
+    if (uptime !== 1) {
         unit = unit + 's';
     }
 
