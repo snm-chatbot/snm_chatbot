@@ -10,7 +10,7 @@ module.exports = function(controller) {
                     {
                         'type':'postback',
                         'title':'Podrobný harmonogram',
-                        'payload':'harmonogram_detail',
+                        'payload':'harmonodetail',
                     },
                     {
                         'type':'web_url',
@@ -29,7 +29,7 @@ module.exports = function(controller) {
 
     controller.on('facebook_postback', function(bot, message) {
 
-        if (message.payload === 'harmonogram_detail') {
+        if (message.payload === 'harmonodetail') {
             var attachment = {
                 'type':'template',
                 'payload':{
