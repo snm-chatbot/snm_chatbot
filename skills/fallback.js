@@ -1,7 +1,7 @@
 var giphy = require('giphy-api')();
 
 module.exports = function(controller) {
-    controller.on('message_received,facebook_postback', function(bot, message) {
+    controller.on('message_received', function(bot, message) {
         bot.startTyping(message, function () {
             giphy.random('idk', function (err, res) {
                 if (res.data.id) {
