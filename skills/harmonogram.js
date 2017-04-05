@@ -1,5 +1,5 @@
 module.exports = function(controller) {
-    controller.hears('harmonogram', 'message_received', function(bot, message) {
+    controller.hears('harmonogram', 'message_received,facebook_postback', function(bot, message) {
 
         var attachment = {
             'type':'template',
