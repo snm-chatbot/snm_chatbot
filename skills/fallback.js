@@ -1,7 +1,7 @@
 var giphy = require('giphy-api')();
 
 module.exports = function(controller) {
-    controller.on('message_received', function(bot, message) {
+    controller.on('message_received,facebook_postback', function(bot, message) {
         bot.startTyping(message, function () {
             giphy.random('idk', function (err, res) {
                 if (res.data.id) {
@@ -19,10 +19,11 @@ module.exports = function(controller) {
                     'Cože??',
                     'Znovu a lépe.',
                     'WTF.',
+                    '¯\_(ツ)_/¯',
                     'tlhIngan Hol vIjatlhlaHbe\'.', //Neumím hovořit klingonsky. :D
                 ];
                 var response = responses[Math.floor(Math.random() * responses.length)];
-                bot.reply(message, response + ' Zkus: jak se jmenuju, ahoj, kdo jsi nebo říkej mi (*)');
+                bot.reply(message, response + ' Zkus něco jiného nebo si vyber v menu vlevo dole.');
                 bot.reply(message, gif);
                 return false;
             });
