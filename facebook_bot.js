@@ -117,6 +117,7 @@ require('./skills/basics')(controller);
 // PROCEDURAL
 require('./skills/harmonogram')(controller);
 require('./skills/school')(controller);
+require('./skills/prijimaci-rizeni')(controller);
 
 // GIFS
 // giphy, gif
