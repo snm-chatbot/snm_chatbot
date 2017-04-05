@@ -3,7 +3,7 @@ var giphy = require('giphy-api')();
 
 module.exports = function(controller) {
 
-    controller.hears(['^ahoj', '^[cč]au', '^zdravim', '^nazdar', '^hoj'], 'message_received,facebook_postback', function(bot, message) {
+    controller.hears(['^ahoj', '^[cč]au', '^zdravim', '^nazdar', '^hoj', '^get started'], 'message_received,facebook_postback', function(bot, message) {
         controller.storage.users.get(message.user, function(err, user) {
             if (user && user.name) {
                 bot.reply(message, 'Ahoj ' + user.name + '!!');
@@ -13,7 +13,7 @@ module.exports = function(controller) {
         });
     });
 
-    controller.hears(['jak je\\?', 'jak se m[aá][sš]', 'jak se da[rř][ií]', '^jaksemas'], 'message_received,facebook_postback', function(bot,message) {
+    controller.hears(['jak je\\?', 'jak se m[aá][sš]', 'jak se da[rř][ií]', '^jaksemas'], 'message_received', function(bot,message) {
         var askUser = function(err, convo) {
             convo.ask('U mě dobrý. Co u tebe?', function(response, convo) {
                 convo.say('Cool cool cool.');
@@ -28,7 +28,7 @@ module.exports = function(controller) {
         bot.reply(message, 'Mluv prosimtě česky, jo?');
     });
 
-    controller.hears(['[rř][ií]kej mi (.*)', 'jmenuj[ui] se (.*)'], 'message_received,facebook_postback', function(bot, message) {
+    controller.hears(['[rř][ií]kej mi (.*)', 'jmenuj[ui] se (.*)'], 'message_received', function(bot, message) {
         var name = message.match[1];
         controller.storage.users.get(message.user, function(err, user) {
             if (!user) {
@@ -43,7 +43,7 @@ module.exports = function(controller) {
         });
     });
 
-    controller.hears(['jak se jmenuj[ui]', 'who am i'], 'message_received,facebook_postback', function(bot, message) {
+    controller.hears(['jak se jmenuj[ui]', 'who am i'], 'message_received', function(bot, message) {
         controller.storage.users.get(message.user, function(err, user) {
             if (user && user.name) {
                 bot.reply(message, 'Jsi ' + user.name);
@@ -110,7 +110,7 @@ module.exports = function(controller) {
         });
     });
 
-    controller.hears(['shutdown'], 'message_received,facebook_postback', function(bot, message) {
+    controller.hears(['shutdown'], 'message_received', function(bot, message) {
 
         bot.startConversation(message, function(err, convo) {
 
@@ -137,7 +137,7 @@ module.exports = function(controller) {
         });
     });
 
-    controller.hears(['p[rř]edstav se', 'kdo jsi', 'jak se jmenuje[sš]'], 'message_received,facebook_postback', function(bot, message) {
+    controller.hears(['p[rř]edstav se', 'kdo jsi', 'jak se jmenuje[sš]'], 'message_received', function(bot, message) {
         bot.startTyping(message, function () {
             var gif = {
                 'attachment': {
@@ -155,9 +155,9 @@ module.exports = function(controller) {
         });
     });
 
-    controller.hears(['^d[ií]k', '^d[eě]kuju', 'danke', 'thanks', 'thx'], 'message_received,facebook_postback', function(bot, message) {
+    controller.hears(['^d[ií]k', '^d[eě]kuju', 'danke', 'thanks', 'thx'], 'message_received', function(bot, message) {
         bot.startTyping(message, function () {
-            giphy.random('no problem', function (err, res) {
+            giphy.random('np', function (err, res) {
                 if (res.data.id) {
                     var gif = {
                         'attachment': {
@@ -184,7 +184,7 @@ module.exports = function(controller) {
         });
     });
 
-    controller.hears(['^tak ahoj', '^tak [cč]au', '^sbohem', '^m[eě]j se', '^pa'], 'message_received,facebook_postback', function(bot, message) {
+    controller.hears(['^tak ahoj', '^tak [cč]au', '^sbohem', '^m[eě]j se', '^pa'], 'message_received', function(bot, message) {
         bot.startTyping(message, function () {
             giphy.random('bye', function (err, res) {
                 if (res.data.id) {
@@ -203,7 +203,7 @@ module.exports = function(controller) {
         });
     });
 
-    controller.hears(['uptime'], 'message_received,facebook_postback', function(bot, message) {
+    controller.hears(['uptime'], 'message_received', function(bot, message) {
 
             var hostname = os.hostname();
             var uptime = formatUptime(process.uptime());
