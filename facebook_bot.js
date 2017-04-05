@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 if (!process.env.page_token) {
     console.log('Error: Specify page_token in environment');
     process.exit(1);
@@ -72,18 +74,28 @@ controller.api.messenger_profile.menu([{
     'composer_input_disabled': true,
     'call_to_actions': [
         {
-            'title': 'My Skills',
+            'title': 'Co umím?',
             'type': 'nested',
             'call_to_actions': [
                 {
-                    'title': 'Hello',
+                    'title': 'Ahoj',
                     'type': 'postback',
-                    'payload': 'Hello'
+                    'payload': 'ahoj'
                 },
                 {
-                    'title': 'Hi',
+                    'title': 'Jaký je rozvrh?',
                     'type': 'postback',
-                    'payload': 'Hi'
+                    'payload': 'rozvrh'
+                },
+                {
+                    'title': 'Jaký je harmonogram?',
+                    'type': 'postback',
+                    'payload': 'harmonogram'
+                },
+                {
+                    'title': 'Informace o praxi',
+                    'type': 'postback',
+                    'payload': 'praxe'
                 }
             ]
         }
@@ -109,6 +121,7 @@ require('./skills/basics')(controller);
 
 // PROCEDURAL
 require('./skills/harmonogram')(controller);
+require('./skills/school')(controller);
 
 // GIFS
 // giphy, gif
