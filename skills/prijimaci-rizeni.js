@@ -13,8 +13,8 @@ module.exports = function(controller) {
       bot.reply(message, 'Z testu je třeba 25 z 50 bodů aby ses dostal k ústní zkoušce.');
   });
 
-  controller.hears(['uk[a]ázkov[yý] test', 'zkusit', 'nane[cč]isto'], 'message_received,facebook_postback', function(bot, message) {
-      bot.reply(message, 'Zkusit si přijímačku můžeš tady: http://snmprijimacky.cz/testy/');
+  controller.hears(['uk[aá]zkov[yý] test', 'zkusit', 'nane[cč]isto'], 'message_received,facebook_postback', function(bot, message) {
+      bot.reply(message, 'Zkusit si přijímačky můžeš tady: http://snmprijimacky.cz/testy/');
   });
 
   controller.hears(['kolik [cč]asu .* test', 'jak dlouho .* test'], 'message_received,facebook_postback', function(bot, message) {
@@ -31,9 +31,10 @@ module.exports = function(controller) {
               };
           }
       bot.reply(message, gif);
+    });
   });
 
-  controller.hears(['kolik stoj[ií] .* p[rř]ihl[aá][sš]ka', 'za kolik je p[rř]ihl[aá][sš]ka', 'cena .* p[rř]ihl[aá]šk[ya]'], 'message_received,facebook_postback', function(bot, message) {
+  controller.hears(['kolik stoj[ií] p[rř]ihl[aá][sš]ka', 'za kolik je p[rř]ihl[aá][sš]ka', 'cena .* p[rř]ihl[aá]šk[ya]'], 'message_received,facebook_postback', function(bot, message) {
       var question = function(err, convo) {
           convo.ask('500Kč. A víš co ještě stojí 500Kč?', function(response, convo) {
               convo.say('17 piv. To je ta přihláška lepší, ne?');
@@ -64,5 +65,4 @@ module.exports = function(controller) {
   controller.hears(['kolik .* komis[ei]', 'komis[ei] .* kolik'], 'message_received,facebook_postback', function(bot, message) {
       bot.reply(message, 'Komise na ústní část se skládá alespoň ze 3 expertů na problematiku.');
   });
-}
-
+};
