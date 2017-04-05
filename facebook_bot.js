@@ -88,11 +88,6 @@ controller.api.messenger_profile.menu([{
                     'payload': 'rozvrh'
                 },
                 {
-                    'title': 'Jaký je harmonogram?',
-                    'type': 'postback',
-                    'payload': 'harmonogram'
-                },
-                {
                     'title': 'Informace o praxi',
                     'type': 'postback',
                     'payload': 'praxe'
