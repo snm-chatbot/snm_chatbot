@@ -1,4 +1,4 @@
-var os = require('os');
+var giphy = require('giphy-api')();
 
 module.exports = function(controller) {
   controller.hears(['kdy .* p[rř]ihl[aá][sš]k[au]'], 'message_received,facebook_postback', function(bot, message) {
